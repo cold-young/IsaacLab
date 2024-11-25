@@ -18,6 +18,10 @@ ISAACLAB_ASSETS_DATA_DIR = os.path.join(ISAACLAB_ASSETS_EXT_DIR, "data")
 ISAACLAB_ASSETS_METADATA = toml.load(os.path.join(ISAACLAB_ASSETS_EXT_DIR, "config", "extension.toml"))
 """Extension metadata dictionary parsed from the extension.toml file."""
 
+ISAACLAB_ASSETS_PRIME_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "prime_asset"))
+"""Path to the extension source directory."""
+
+
 # Configure the module-level variables
 __version__ = ISAACLAB_ASSETS_METADATA["package"]["version"]
 

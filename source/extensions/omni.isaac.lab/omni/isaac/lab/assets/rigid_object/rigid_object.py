@@ -265,9 +265,9 @@ class RigidObject(AssetBase):
     def _initialize_impl(self):
         # create simulation view
         self._physics_sim_view = physx.create_simulation_view(self._backend)
-        self._physics_sim_view.set_subspace_roots("/")
+        self._physics_sim_view.set_subspace_roots("/") ####
         # obtain the first prim in the regex expression (all others are assumed to be a copy of this)
-        template_prim = sim_utils.find_first_matching_prim(self.cfg.prim_path)
+        template_prim = sim_utils.find_first_matching_prim(self.cfg.prim_path) 
         if template_prim is None:
             raise RuntimeError(f"Failed to find prim for expression: '{self.cfg.prim_path}'.")
         template_prim_path = template_prim.GetPath().pathString
@@ -282,6 +282,8 @@ class RigidObject(AssetBase):
                 " Please ensure that the prim has 'USD RigidBodyAPI' applied."
             )
         if len(root_prims) > 1:
+            # Temporal CY
+            # root_prims = root_prims[:1]
             raise RuntimeError(
                 f"Failed to find a single rigid body when resolving '{self.cfg.prim_path}'."
                 f" Found multiple '{root_prims}' under '{template_prim_path}'."

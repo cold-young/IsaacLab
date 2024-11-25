@@ -15,7 +15,9 @@ from omni.isaac.lab.sim import PhysxCfg, SimulationCfg
 from omni.isaac.lab.sim.spawners.materials.physics_materials_cfg import RigidBodyMaterialCfg
 from omni.isaac.lab.utils import configclass
 from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
+from omni.isaac.lab_assets import ISAACLAB_ASSETS_PRIME_DIR
 
+import os
 
 @configclass
 class AllegroHandEnvCfg(DirectRLEnvCfg):
@@ -71,9 +73,13 @@ class AllegroHandEnvCfg(DirectRLEnvCfg):
     object_cfg: RigidObjectCfg = RigidObjectCfg(
         prim_path="/World/envs/env_.*/object",
         spawn=sim_utils.UsdFileCfg(
-            usd_path=f"{ISAAC_NUCLEUS_DIR}/Props/Blocks/DexCube/dex_cube_instanceable.usd",
+            # usd_path=f"{ISAAC_NUCLEUS_DIR}/Props/Blocks/DexCube/dex_cube_instanceable.usd",
+            # usd_path=f"{ISAACLAB_ASSETS_PRIME_DIR}/hetero_cube.usd",
+            usd_path=f"{ISAACLAB_ASSETS_PRIME_DIR}/hetero_cube_2.usd",
             rigid_props=sim_utils.RigidBodyPropertiesCfg(
-                kinematic_enabled=False,
+                # TODO CY
+                # rigidbody_enabled option
+                kinematic_enabled=False, # ?
                 disable_gravity=False,
                 enable_gyroscopic_forces=True,
                 solver_position_iteration_count=8,
@@ -83,10 +89,39 @@ class AllegroHandEnvCfg(DirectRLEnvCfg):
                 max_depenetration_velocity=1000.0,
             ),
             mass_props=sim_utils.MassPropertiesCfg(density=400.0),
+            # mass_props=sim_utils.MassPropertiesCfg(mass=2.0),
             scale=(1.2, 1.2, 1.2),
         ),
         init_state=RigidObjectCfg.InitialStateCfg(pos=(0.0, -0.17, 0.56), rot=(1.0, 0.0, 0.0, 0.0)),
     )
+
+    # tempoal 
+    # almenge
+    # almeng_cfg: RigidObjectCfg = RigidObjectCfg(
+    #     prim_path="/World/envs/env_.*/almeng",
+    #     spawn=sim_utils.UsdFileCfg(
+    #         # usd_path=f"{ISAAC_NUCLEUS_DIR}/Props/Blocks/DexCube/dex_cube_instanceable.usd",
+    #         usd_path=f"{ISAACLAB_ASSETS_PRIME_DIR}/almeng.usd",
+    #         # usd_path=f"{ISAACLAB_ASSETS_PRIME_DIR}/hetero_cube_2.usd",
+    #         rigid_props=sim_utils.RigidBodyPropertiesCfg(
+    #             # TODO CY
+    #             # rigidbody_enabled option
+    #             kinematic_enabled=False, # ?
+    #             disable_gravity=False,
+    #             enable_gyroscopic_forces=True,
+    #             solver_position_iteration_count=8,
+    #             solver_velocity_iteration_count=0,
+    #             sleep_threshold=0.005,
+    #             stabilization_threshold=0.0025,
+    #             max_depenetration_velocity=1000.0,
+    #         ),
+    #         mass_props=sim_utils.MassPropertiesCfg(density=400.0),
+    #         scale=(1.2, 1.2, 1.2),
+    #     ),
+    #     init_state=RigidObjectCfg.InitialStateCfg(pos=(0.0, -0.17, 0.56), rot=(1.0, 0.0, 0.0, 0.0)),
+    # )
+
+
     # goal object
     goal_object_cfg: VisualizationMarkersCfg = VisualizationMarkersCfg(
         prim_path="/Visuals/goal_marker",

@@ -22,6 +22,7 @@ from omni.isaac.lab.sim.spawners.materials.physics_materials_cfg import RigidBod
 from omni.isaac.lab.utils import configclass
 from omni.isaac.lab.utils.assets import ISAAC_NUCLEUS_DIR
 from omni.isaac.lab.utils.noise import AdditiveGaussianNoiseCfg as Gnoise
+from omni.isaac.lab_assets import ISAACLAB_ASSETS_PRIME_DIR
 
 import omni.isaac.lab_tasks.manager_based.manipulation.inhand.mdp as mdp
 
@@ -41,6 +42,7 @@ class InHandObjectSceneCfg(InteractiveSceneCfg):
     object: RigidObjectCfg = RigidObjectCfg(
         prim_path="{ENV_REGEX_NS}/object",
         spawn=sim_utils.UsdFileCfg(
+            # usd_path=f"{ISAACLAB_ASSETS_PRIME_DIR}/hetero_cube_2.usd",
             usd_path=f"{ISAAC_NUCLEUS_DIR}/Props/Blocks/DexCube/dex_cube_instanceable.usd",
             rigid_props=sim_utils.RigidBodyPropertiesCfg(
                 kinematic_enabled=False,
@@ -52,8 +54,10 @@ class InHandObjectSceneCfg(InteractiveSceneCfg):
                 stabilization_threshold=0.0025,
                 max_depenetration_velocity=1000.0,
             ),
+            scale=(1.2, 1.2, 1.2), #ADD
             mass_props=sim_utils.MassPropertiesCfg(density=400.0),
         ),
+        # init_state=RigidObjectCfg.InitialStateCfg(pos=(0.0, -0.17, 0.56), rot=(1.0, 0.0, 0.0, 0.0)),
         init_state=RigidObjectCfg.InitialStateCfg(pos=(0.0, -0.19, 0.56), rot=(1.0, 0.0, 0.0, 0.0)),
     )
 
@@ -208,26 +212,26 @@ class EventCfg:
     )
 
     # -- object
-    object_physics_material = EventTerm(
-        func=mdp.randomize_rigid_body_material,
-        mode="startup",
-        params={
-            "asset_cfg": SceneEntityCfg("object", body_names=".*"),
-            "static_friction_range": (0.7, 1.3),
-            "dynamic_friction_range": (0.7, 1.3),
-            "restitution_range": (0.0, 0.0),
-            "num_buckets": 250,
-        },
-    )
-    object_scale_mass = EventTerm(
-        func=mdp.randomize_rigid_body_mass,
-        mode="startup",
-        params={
-            "asset_cfg": SceneEntityCfg("object"),
-            "mass_distribution_params": (0.4, 1.6),
-            "operation": "scale",
-        },
-    )
+    # object_physics_material = EventTerm(
+    #     func=mdp.randomize_rigid_body_material,
+    #     mode="startup",
+    #     params={
+    #         "asset_cfg": SceneEntityCfg("object", body_names=".*"),
+    #         "static_friction_range": (0.7, 1.3),
+    #         "dynamic_friction_range": (0.7, 1.3),
+    #         "restitution_range": (0.0, 0.0),
+    #         "num_buckets": 250,
+    #     },
+    # )
+    # object_scale_mass = EventTerm(
+    #     func=mdp.randomize_rigid_body_mass,
+    #     mode="startup",
+    #     params={
+    #         "asset_cfg": SceneEntityCfg("object"),
+    #         "mass_distribution_params": (0.4, 1.6),
+    #         "operation": "scale",
+    #     },
+    # )
 
     # reset
     reset_object = EventTerm(
@@ -239,6 +243,7 @@ class EventCfg:
             "asset_cfg": SceneEntityCfg("object", body_names=".*"),
         },
     )
+
     reset_robot_joints = EventTerm(
         func=mdp.reset_joints_within_limits_range,
         mode="reset",
@@ -256,11 +261,11 @@ class RewardsCfg:
     """Reward terms for the MDP."""
 
     # -- task
-    # track_pos_l2 = RewTerm(
-    #     func=mdp.track_pos_l2,
-    #     weight=-10.0,
-    #     params={"object_cfg": SceneEntityCfg("object"), "command_name": "object_pose"},
-    # )
+    track_pos_l2 = RewTerm(
+        func=mdp.track_pos_l2,
+        weight=-10.0,
+        params={"object_cfg": SceneEntityCfg("object"), "command_name": "object_pose"},
+    )
     track_orientation_inv_l2 = RewTerm(
         func=mdp.track_orientation_inv_l2,
         weight=1.0,
@@ -274,8 +279,9 @@ class RewardsCfg:
 
     # -- penalties
     joint_vel_l2 = RewTerm(func=mdp.joint_vel_l2, weight=-2.5e-5)
-    action_l2 = RewTerm(func=mdp.action_l2, weight=-0.0001)
-    action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.01)
+    # action_l2 = RewTerm(func=mdp.action_l2, weight=-0.0001)
+    action_l2 = RewTerm(func=mdp.action_l2, weight=-0.0002)
+    # action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.01)
 
     # -- optional penalties (these are disabled by default)
     # object_away_penalty = RewTerm(
@@ -295,10 +301,11 @@ class TerminationsCfg:
         func=mdp.max_consecutive_success, params={"num_success": 50, "command_name": "object_pose"}
     )
 
-    object_out_of_reach = DoneTerm(func=mdp.object_away_from_robot, params={"threshold": 0.3})
+    # object_out_of_reach = DoneTerm(func=mdp.object_away_from_robot, params={"threshold": 0.3})
+    object_out_of_reach = DoneTerm(func=mdp.object_away_from_robot, params={"threshold": 0.24})
 
     # object_out_of_reach = DoneTerm(
-    #     func=mdp.object_away_from_goal, params={"threshold": 0.24, "command_name": "object_pose"}
+        # func=mdp.object_away_from_goal, params={"threshold": 0.24, "command_name": "object_pose"}
     # )
 
 

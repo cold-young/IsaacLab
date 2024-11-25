@@ -80,6 +80,9 @@ class InHandManipulationEnv(DirectRLEnv):
         # add hand, in-hand object, and goal object
         self.hand = Articulation(self.cfg.robot_cfg)
         self.object = RigidObject(self.cfg.object_cfg)
+        # TODO CY
+        # self.almeng = RigidObject(self.cfg.almeng_cfg)
+
         # add ground plane
         spawn_ground_plane(prim_path="/World/ground", cfg=GroundPlaneCfg())
         # clone and replicate (no need to filter for this environment)
@@ -87,6 +90,8 @@ class InHandManipulationEnv(DirectRLEnv):
         # add articulation to scene - we must register to scene to randomize with EventManager
         self.scene.articulations["robot"] = self.hand
         self.scene.rigid_objects["object"] = self.object
+        # TODO CY
+        # self.scene.rigid_objects["almeng"] = self.almeng
         # add lights
         light_cfg = sim_utils.DomeLightCfg(intensity=2000.0, color=(0.75, 0.75, 0.75))
         light_cfg.func("/World/Light", light_cfg)
@@ -222,6 +227,9 @@ class InHandManipulationEnv(DirectRLEnv):
 
         object_default_state[:, 7:] = torch.zeros_like(self.object.data.default_root_state[env_ids, 7:])
         self.object.write_root_state_to_sim(object_default_state, env_ids)
+
+        # object mass randomize CY
+
 
         # reset hand
         delta_max = self.hand_dof_upper_limits[env_ids] - self.hand.data.default_joint_pos[env_ids]
@@ -409,8 +417,9 @@ def compute_rewards(
 
     # Find out which envs hit the goal and update successes count
     goal_resets = torch.where(torch.abs(rot_dist) <= success_tolerance, torch.ones_like(reset_goal_buf), reset_goal_buf)
-    successes = successes + goal_resets
 
+    successes = successes + goal_resets
+    # print("goal_resets : ",torch.sum(goal_resets).item())
     # Success bonus: orientation is within `success_tolerance` of goal orientation
     reward = torch.where(goal_resets == 1, reward + reach_goal_bonus, reward)
 

@@ -71,7 +71,7 @@ def design_scene():
         debug_vis=True,
     )
     cube_object = DeformableObject(cfg=cfg)
-
+    # from IPython import embed; embed(); exit()
     # return the scene information
     scene_entities = {"cube_object": cube_object}
     return scene_entities, origins

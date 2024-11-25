@@ -33,7 +33,7 @@ from .direct_rl_env_cfg import DirectRLEnvCfg
 from .ui import ViewportCameraController
 from .utils.spaces import sample_space, spec_to_gym_space
 
-
+# CY
 class DirectRLEnv(gym.Env):
     """The superclass for the direct workflow to design environments.
 
@@ -340,6 +340,8 @@ class DirectRLEnv(gym.Env):
 
         self.reset_terminated[:], self.reset_time_outs[:] = self._get_dones()
         self.reset_buf = self.reset_terminated | self.reset_time_outs
+        # print(f"Reset buf - direct_rl_env: {self.reset_buf}")
+
         self.reward_buf = self._get_rewards()
 
         # -- reset envs that terminated/timed-out and log the episode information
